@@ -1,0 +1,297 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "customer support",
+        "formDescription": "feedback from customer",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "What can we do for you"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b849585e-477a-4f92-9db4-afc4af78caf1",
+      "name": "On form submission",
+      "webhookId": "b59bcf82-c429-4cbc-9ac6-e76d57764b26"
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json[\"What can we do for you\"] }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Subcriptions",
+              "description": "Anything that as to do with subscription or registering"
+            },
+            {
+              "category": "Technical",
+              "description": "anything that has to do with App function"
+            },
+            {
+              "category": "Security",
+              "description": "other"
+            },
+            {
+              "category": "Anything that was not captured by category 1,2 and 3",
+              "description": "Anything that did not fall into any of the first 3 categories"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        -16
+      ],
+      "id": "ddf4b799-2085-49b4-8830-2c565bd072aa",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        160,
+        208
+      ],
+      "id": "261f5e3b-b8f8-49ea-9850-cf72cc0a8599",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1zW6prUV_1zzcDg3CmnLZPAyReQvDUgPwDyqU7UvaruM",
+          "mode": "list",
+          "cachedResultName": "su",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zW6prUV_1zzcDg3CmnLZPAyReQvDUgPwDyqU7UvaruM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zW6prUV_1zzcDg3CmnLZPAyReQvDUgPwDyqU7UvaruM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "sub": "={{ $json[\"What can we do for you\"] }}"
+          },
+          "matchingColumns": [
+            "sub"
+          ],
+          "schema": [
+            {
+              "id": "sub",
+              "displayName": "sub",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        592,
+        224
+      ],
+      "id": "d84f2789-effb-4ea6-921d-6089129dd74d",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ioJA8ij9HuZ4o3rA",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "7509896645",
+        "text": "={{ $json[\"What can we do for you\"] }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        576,
+        -176
+      ],
+      "id": "5fb30730-bba0-4685-8b61-5eb71b3f60f8",
+      "name": "Send a text message",
+      "webhookId": "a879419a-d003-434a-9228-573342f548f3",
+      "credentials": {
+        "telegramApi": {
+          "id": "owqPcDMCOPKw817e",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "yapiyapoayo@gmail.com",
+        "subject": "App support",
+        "message": "={{ $json[\"What can we do for you\"] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        576,
+        -32
+      ],
+      "id": "7ebc69a2-fbe2-4ca1-8cb1-35b42c74d597",
+      "name": "Send a message",
+      "webhookId": "a0752f95-a4a5-40ff-8d6a-148b08f3d63b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "RuHsNXPhn2jg7oNp",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "yapiyapoayo@gmail.com",
+        "subject": "Forward to the right categories",
+        "emailType": "text",
+        "message": "={{ $json[\"What can we do for you\"] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        608,
+        112
+      ],
+      "id": "742bb479-2061-49a1-8dd1-714c33f7afe4",
+      "name": "Send a message1",
+      "webhookId": "2eb657f2-eb6d-41de-9933-ed8297c76821",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "RuHsNXPhn2jg7oNp",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "On form submission": [
+      {
+        "json": {
+          "What can we do for you": "good",
+          "submittedAt": "2026-10-02T14:10:57.121+01:00",
+          "formMode": "test"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "2ff081bd-fb23-41cd-9b57-1e9f1bacec5e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5c509c09ef0919f11f806243634891be263b14464af8aeee4e78921844335a59"
+  },
+  "nodeGroups": [],
+  "id": "vEzKBDQLTXpPPLDv",
+  "tags": []
+}
