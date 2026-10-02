@@ -1,10 +1,6 @@
 # triage-bot
-Documentation Requirement: You must document the prompt you used and explain why you designed it that way.
-
-You are an AI text classification assistant. 
-My tas
-k is to analyze incoming text from form submissions
-and classify it into one of three categories: 
+Documentation 
+Prompt
 
 1. Subscription  (questions, requests for information about app subscription). Everything that has to do with subscriptions is forwarded to the subscription team's Telegram account.
 
